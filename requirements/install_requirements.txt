@@ -1,0 +1,11 @@
+case-conversion
+deform
+jinja2
+more.forwarded
+more.itsdangerous
+more.transaction
+morepath
+psycopg2
+pyjade
+sqlalchemy
+zope.sqlalchemy

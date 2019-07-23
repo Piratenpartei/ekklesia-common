@@ -3,7 +3,7 @@ import os.path
 import jinja2.runtime
 from more.babel_i18n.request_utils import BabelRequestUtils
 from pytest import fixture
-from ekklesia_portal.helper.templating import make_jinja_env
+from ekklesia_common.templating import make_jinja_env
 
 TEST_DATETIME = datetime(2017, 1, 1, 11, 23, 42)
 TEST_DATETIME_FORMATTED = "Jan 1, 2017, 11:23:42 AM"
@@ -65,11 +65,11 @@ def test_filter_datetimeformat_in_germany(app, render_string):
 
 def test_translation(app, render_string):
     app.settings.babel_i18n.default_locale = "en_US"
-    res = render_string("{{ _('terms_of_use') }}")
+    res = render_string("{{ _('test') }}")
     assert res == "Terms of Use"
 
 
 def test_translation_with_args(app, render_string):
     app.settings.babel_i18n.default_locale = "en_US"
-    res = render_string("{{ _('authored_at', dt=datestring) }}", datestring=TEST_DATETIME_FORMATTED)
+    res = render_string("{{ _('date_test', dt=datestring) }}", datestring=TEST_DATETIME_FORMATTED)
     assert res == f"Added at {TEST_DATETIME_FORMATTED}"

@@ -1,12 +1,13 @@
 import inspect
 from unittest.mock import Mock
+from morepath import Request
+from morepath.request import BaseRequest
 from munch import Munch
 from pytest import fixture, raises
-import ekklesia_portal.helper.cell
-from ekklesia_portal.helper.cell import Cell, JinjaCellEnvironment
-from ekklesia_portal.app import make_jinja_env
-from ekklesia_portal.request import EkklesiaPortalRequest
-from webob.request import BaseRequest
+import ekklesia_common.cell
+from ekklesia_common.cell import Cell, JinjaCellEnvironment
+from ekklesia_common.request import EkklesiaRequest
+from ekklesia_common.templating import make_jinja_env
 
 
 @fixture
@@ -15,12 +16,6 @@ def model():
         pass
 
     return TestModel(id=5, title="test", private="secret")
-
-
-@fixture
-def request_for_cell(app):
-    environ = BaseRequest.blank('test').environ
-    return Mock(spec=EkklesiaPortalRequest(environ, app))
 
 
 @fixture
@@ -37,6 +32,11 @@ def render_template(jinja_env):
         return template.render(**context)
 
     return render_template
+
+@fixture
+def req(app):
+    environ = BaseRequest.blank('test').environ
+    return Mock(spec=EkklesiaRequest(environ, app))
 
 
 @fixture
@@ -67,8 +67,8 @@ def cell_class(model):
 
 
 @fixture
-def cell(cell_class, model, request_for_cell):
-    return cell_class(model, request_for_cell)
+def cell(cell_class, model, req):
+    return cell_class(model, req)
 
 
 def test_root_cell_uses_layout(cell):
@@ -83,7 +83,7 @@ def test_nested_cells(model, cell):
 
 
 def test_cell_is_registrated(cell, model):
-    assert model.__class__ in ekklesia_portal.helper.cell._cell_registry
+    assert model.__class__ in ekklesia_common.cell._cell_registry
 
 
 def test_cell_cell(cell, model):
@@ -152,16 +152,16 @@ def test_cell_show(cell, model):
     cell.render_template.assert_called_with(cell.template_path)
 
 
-def test_cell_render_cell(cell, model, request_for_cell):
+def test_cell_render_cell(cell, model, req):
     cell.render_cell(model)
-    request_for_cell.render_template.assert_called
-    assert request_for_cell.render_template.call_args[0][0] == cell.template_path
+    req.render_template.assert_called
+    assert req.render_template.call_args[0][0] == cell.template_path
 
 
-def test_cell_render_cell_nonstandard_view(cell, model, request_for_cell):
+def test_cell_render_cell_nonstandard_view(cell, model, req):
     cell.render_cell(model, 'alternate_view', some_option=42)
-    request_for_cell.render_template.assert_called
-    assert request_for_cell.render_template.call_args[0][0] == 'alternate_template'
+    req.render_template.assert_called
+    assert req.render_template.call_args[0][0] == 'alternate_template'
 
 
 def test_cell_render_cell_collection(cell, model):
@@ -181,9 +181,9 @@ def test_cell_render_cell_model_and_collection_not_allowed(cell, model):
         cell.render_cell(model, collection=[], some_option=42)
 
 
-def test_cell_jinja_integration(cell, model, render_template, request_for_cell):
+def test_cell_jinja_integration(cell, model, render_template, req):
 
-    request_for_cell.render_template.side_effect = render_template
+    req.render_template.side_effect = render_template
     res = cell.show()
     assert str(model.id) in res.content
     assert model.title in res.content

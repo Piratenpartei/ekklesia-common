@@ -4,7 +4,7 @@ from typing import Any, Iterable, Dict, Type, ClassVar
 import case_conversion
 import inspect
 import jinja2
-from ekklesia_portal.helper.utils import cached_property
+from ekklesia_common.utils import cached_property
 from markupsafe import Markup
 
 
@@ -26,7 +26,7 @@ class CellMeta(type):
             _cell_registry[model] = cls
         if 'template_prefix' not in cls.__dict__:
             module_path = cls.__module__.split('.')
-            if module_path[1] == 'concepts':
+            if len(module_path) > 1 and module_path[1] == 'concepts':
                 cls.template_prefix = module_path[2]
             else:
                 cls.template_prefix = None

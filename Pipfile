@@ -1,0 +1,39 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+morepath = "*"
+"more.transaction" = "*"
+"psycopg2" = "*"
+pyjade = "*"
+sqlalchemy = "*"
+sqlalchemy-utils = "*"
+"zope.sqlalchemy" = "*"
+requests-oauthlib = "*"
+"more.forwarded" = "*"
+deform = "*"
+case-conversion = "*"
+py-gfm = "*"
+
+[dev-packages]
+"e1839a8" = {editable = true, path = "."}
+"3a80447" = {editable = true, path = "./../more.babel_i18n"}
+"38f2bc8" = {editable = true, path = "./../more.browser_session"}
+werkzeug = "*"
+coverage = "*"
+pytest = "*"
+munch = "*"
+ipdb = "*"
+"autopep8" = "*"
+pytest-cov = "*"
+pytest-instafail = "*"
+pytest-print = "*"
+pytest-pspec = "*"
+bandit = "*"
+pylava = "*"
+cookiecutter = "*"
+
+[requires]
+python_version = "3.7"
